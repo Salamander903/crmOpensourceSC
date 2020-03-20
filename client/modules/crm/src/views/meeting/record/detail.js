@@ -32,6 +32,11 @@ define('crm:views/meeting/record/detail', 'views/record/detail', function (Dep) 
 
         duplicateAction: true,
 
+        setup: function () {
+            Dep.prototype.setup.call(this);
+            this.hidePanel('scheduler', true);
+        },
+
         setupActionItems: function () {
             Dep.prototype.setupActionItems.call(this);
             if (this.getAcl().checkModel(this.model, 'edit')) {

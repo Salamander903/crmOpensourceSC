@@ -49,6 +49,8 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
             this.usersField = this.options.usersField || 'users';
             this.assignedUserField = this.options.assignedUserField || 'assignedUser';
 
+            this.userIdList = [];
+
             this.listenTo(this.model, 'change', function (m) {
                 var isChanged =
                     m.hasChanged('isAllDay') ||

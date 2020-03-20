@@ -47,18 +47,16 @@ define('crm:views/meeting/record/panels/scheduler', 'views/record/panels/bottom'
                     this.recordViewObject.hidePanel(this.panelName);
                 }, this);
                 this.listenTo(view, 'has-data', function () {
+                    if (this.disabled) return;
                     this.recordViewObject.showPanel(this.panelName);
                 }, this);
             });
 
             this.once('after:render', function () {
+                if (this.disabled) return;
                 this.getView('scheduler').render();
                 this.getView('scheduler').notToRender = false;
             }, this);
-        },
-
-        afterRender: function () {
-
         },
 
         actionRefresh: function () {
