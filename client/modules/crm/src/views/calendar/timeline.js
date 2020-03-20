@@ -892,8 +892,6 @@ define('crm:views/calendar/timeline', ['view', 'lib!vis'], function (Dep, Vis) {
                         eventList.push(item);
                     }, this);
 
-                    if (userId == this.getUser().id && !this.isBusyRangesMode) continue;
-
                     var userBusyRangeList = data[userId].busyRangeList;
                     userBusyRangeList.forEach(function (item) {
                         item.userId = userId;

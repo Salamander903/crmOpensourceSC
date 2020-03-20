@@ -1260,6 +1260,15 @@ class Activities extends \Espo\Core\Services\Base
 
     public function getUsersTimeline($userIdList, $from, $to, $scopeList = null)
     {
+        $brScopeList = $this->getConfig()->get('busyRangesEntityTypeList') ?? ['Meeting', 'Call'];
+        if ($scopeList) {
+            foreach ($scopeList as $s) {
+                if (!in_array($s, $brScopeList)) {
+                    $brScopeList[] = $s;
+                }
+            }
+        }
+
         $resultData = (object) [];
         foreach ($userIdList as $userId) {
             $userData = (object) [
@@ -1268,7 +1277,7 @@ class Activities extends \Espo\Core\Services\Base
             ];
             try {
                 $userData->eventList = $this->getEventList($userId, $from, $to, $scopeList);
-                $userData->busyRangeList = $this->getBusyRangeList($userId, $from, $to, $scopeList, $userData->eventList);
+                $userData->busyRangeList = $this->getBusyRangeList($userId, $from, $to, $brScopeList, $userData->eventList);
             } catch (\Exception $e) {
                 if ($e instanceof Forbidden) {
                     continue;
