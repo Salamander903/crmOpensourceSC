@@ -179,6 +179,8 @@ define('views/record/panels-container', 'view', function (Dep) {
         },
 
         showPanel: function (name, callback) {
+            if (this.recordHelper.getPanelStateParam(name, 'hiddenLocked')) return;
+
             this.recordHelper.setPanelStateParam(name, 'hidden', false);
 
             var isFound = false;
@@ -247,7 +249,7 @@ define('views/record/panels-container', 'view', function (Dep) {
             }
         },
 
-        setupFinal: function () {
+        setupPanelsFinal: function () {
             var afterDelimiter = false;
             var rightAfterDelimiter = false;
 
@@ -274,6 +276,10 @@ define('views/record/panels-container', 'view', function (Dep) {
             if (~index) {
                 this.panelList.splice(index, 1);
             }
+
+            this.panelList = this.panelList.filter(function (p) {
+                return !this.recordHelper.getPanelStateParam(p.name, 'hiddenLocked');
+            }, this);
         },
 
         actionShowMorePanels: function () {
