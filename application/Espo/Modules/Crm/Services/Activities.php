@@ -1441,7 +1441,7 @@ class Activities extends \Espo\Core\Services\Base
             }
         }
 
-        $canceledStatusList = $this->getMetadata()->get('clientDefs.Calendar.canceledStatusList') ?? [];
+        $canceledStatusList = $this->getMetadata()->get('app.calendar.canceledStatusList') ?? [];
 
         foreach ($eventList as $i => $item) {
             $eventList[$i] = (object) $item;
@@ -1451,6 +1451,7 @@ class Activities extends \Espo\Core\Services\Base
             if (in_array($event->status ?? null, $canceledStatusList)) continue;
 
             if (isset($ignoreHash->{$event->id})) continue;
+
             try {
                 $start = new \DateTime($event->dateStart);
                 $end = new \DateTime($event->dateEnd);
