@@ -77,6 +77,7 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
                         );
                     }
                 } else {
+                    this.trigger('has-data');
                     this.reRender();
                 }
             }, this);
