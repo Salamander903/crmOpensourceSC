@@ -253,12 +253,13 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
             var fromString = from.utc().format(this.getDateTime().internalDateTimeFormat);
             var toString = to.utc().format(this.getDateTime().internalDateTimeFormat);
 
-            var url = 'Activities/action/busyRanges?from=' + fromString + '&to=' + toString;
-
-            url += '&userIdList=' + encodeURIComponent(this.userIdList.join(','));
+            var url =
+                'Activities/action/busyRanges?from=' + fromString + '&to=' + toString +
+                '&userIdList=' + encodeURIComponent(this.userIdList.join(',')) +
+                '&entityType=' + this.model.entityType;
 
             if (this.model.id) {
-                url += '&entityId=' + this.model.id + '&entityType=' + this.model.entityType;
+                url += '&entityId=' + this.model.id;
             }
 
             this.ajaxGetRequest(url).then(function (data) {

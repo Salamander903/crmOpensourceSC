@@ -1283,10 +1283,16 @@ class Activities extends \Espo\Core\Services\Base
 
     public function getBusyRanges(
         array $userIdList, string $from, string $to,
-        ?string $ignoreType = null, ?string $ignoreId = null, ?array $scopeList = null)
+        ?string $entityType = null, ?string $ignoreId = null, ?array $scopeList = null)
     {
-        // TODO configurable scopeList
-        $scopeList = $scopeList ?? ['Meeting', 'Call'];
+        $scopeList = $this->getConfig()->get('busyRangesEntityTypeList') ?? ['Meeting', 'Call'];
+
+        if ($entityType) {
+            if (!$this->getAcl()->check($entityType)) throw new Forbidden();
+            if (!in_array($entityType, $scopeList)) {
+                $scopeList[] = $entityType;
+            }
+        }
 
         try {
             $dtFrom = new \DateTime($from);
@@ -1302,11 +1308,11 @@ class Activities extends \Espo\Core\Services\Base
 
         $ignoreList = null;
 
-        if ($ignoreType && $ignoreId) {
+        if ($entityType && $ignoreId) {
             $ignoreList = [
                 [
                     'id' => $ignoreId,
-                    'scope' => $ignoreType,
+                    'scope' => $entityType,
                 ]
             ];
         }

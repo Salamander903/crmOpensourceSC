@@ -34,7 +34,10 @@ define('crm:views/meeting/record/detail', 'views/record/detail', function (Dep) 
 
         setup: function () {
             Dep.prototype.setup.call(this);
-            this.hidePanel('scheduler', true);
+
+            if (this.getConfig().get('schedulerDisabled')) {
+                this.hidePanel('scheduler', true);
+            }
         },
 
         setupActionItems: function () {
