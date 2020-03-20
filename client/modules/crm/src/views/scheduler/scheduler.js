@@ -139,7 +139,7 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
                             updateGroup: false,
                             remove: false,
                         },
-                        showCurrentTime: false,
+                        showCurrentTime: true,
                         locales: {
                             mylocale: {
                                 current: this.translate('current', 'labels', 'Calendar'),
