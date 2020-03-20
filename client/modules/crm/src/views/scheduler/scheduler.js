@@ -51,7 +51,7 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
 
             this.userIdList = [];
 
-            this.listenTo(this.model, 'change', function (m) {
+            this.listenTo(this.model, 'change', function (m, o) {
                 var isChanged =
                     m.hasChanged('isAllDay') ||
                     m.hasChanged(this.startField) ||
@@ -222,10 +222,16 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
 
             var diff = this.eventEnd.diff(this.eventStart, 'hours');
 
-            if (diff < 0) return;
-
             this.start = this.eventStart.clone();
             this.end = this.eventEnd.clone();
+
+            if (diff < 0) {
+                this.end = this.start.clone();
+            }
+
+            if (diff < 1) {
+                diff = 1;
+            }
 
             this.start.add(-diff * this.rangeMultiplierLeft, 'hours');
             this.end.add(diff * this.rangeMultiplierRight, 'hours');
