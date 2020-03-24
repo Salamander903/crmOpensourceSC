@@ -64,6 +64,7 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
                     this.initDates(true);
 
                     if (!this.start || !this.end || !this.userIdList.length) {
+                        if (!this.timeline) return;
                         this.trigger('no-data');
                         return;
                     }
