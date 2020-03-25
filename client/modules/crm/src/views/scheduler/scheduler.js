@@ -26,7 +26,7 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
+define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis) {
 
     return Dep.extend({
 
@@ -80,6 +80,7 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
                         );
                     }
                 } else {
+                    if (this.isRemoved()) return;
                     this.trigger('has-data');
                     this.reRender();
                 }
@@ -95,10 +96,13 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
         afterRender: function () {
             var $timeline = this.$timeline = this.$el.find('.timeline');
 
-            require('lib!vis', function (Vis) {
+            //require('lib!vis', function (Vis) {
                 this.Vis = Vis;
                 this.initGroupsDataSet();
                 this.initDates();
+
+                //if (!$timeline.get(0)) return;
+                console.log(this.$el.html());
 
                 $timeline.get(0).innerHTML = '';
 
@@ -175,7 +179,7 @@ define('crm:views/scheduler/scheduler', ['view'], function (Dep) {
                     }.bind(this), 500);
 
                 }.bind(this));
-            }.bind(this));
+           // }.bind(this));
         },
 
         updateEvent: function () {
