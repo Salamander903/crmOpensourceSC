@@ -68,5 +68,6 @@ define('crm:views/meeting/record/panels/scheduler', 'views/record/panels/bottom'
         actionRefresh: function () {
             this.getView('scheduler').reRender();
         },
+
     });
 });

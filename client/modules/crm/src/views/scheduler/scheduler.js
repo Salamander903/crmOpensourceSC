@@ -51,6 +51,8 @@ define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis)
 
             this.userIdList = [];
 
+            this.Vis = Vis;
+
             this.listenTo(this.model, 'change', function (m, o) {
                 var isChanged =
                     m.hasChanged('isAllDay') ||
@@ -96,90 +98,86 @@ define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis)
         afterRender: function () {
             var $timeline = this.$timeline = this.$el.find('.timeline');
 
-            //require('lib!vis', function (Vis) {
-                this.Vis = Vis;
-                this.initGroupsDataSet();
-                this.initDates();
+            this.initGroupsDataSet();
+            this.initDates();
 
-                //if (!$timeline.get(0)) return;
-                console.log(this.$el.html());
+            if (!$timeline.get(0)) return;
 
-                $timeline.get(0).innerHTML = '';
+            $timeline.get(0).innerHTML = '';
 
-                if (!this.start || !this.end || !this.userIdList.length) {
-                    this.trigger('no-data');
-                    return;
-                }
+            if (!this.start || !this.end || !this.userIdList.length) {
+                this.trigger('no-data');
+                return;
+            }
 
-                if (this.timeline) {
-                    this.timeline.destroy();
-                }
+            if (this.timeline) {
+                this.timeline.destroy();
+            }
 
-                if (this.lastHeight) {
-                    $timeline.css('min-height', this.lastHeight + 'px');
-                }
+            if (this.lastHeight) {
+                $timeline.css('min-height', this.lastHeight + 'px');
+            }
 
-                this.fetch(this.start, this.end, function (eventList) {
-                    var itemsDataSet = new Vis.DataSet(eventList);
+            this.fetch(this.start, this.end, function (eventList) {
+                var itemsDataSet = new Vis.DataSet(eventList);
 
-                    var timeline = this.timeline = new Vis.Timeline($timeline.get(0), itemsDataSet, this.groupsDataSet, {
-                        dataAttributes: 'all',
-                        start: this.start.toDate(),
-                        end: this.end.toDate(),
-                        moment: function (date) {
-                            var m = moment(date);
-                            if (date && date.noTimeZone) {
-                                return m;
-                            }
-                            return m.tz(this.getDateTime().getTimeZone());
-                        }.bind(this),
-                        format: this.getFormatObject(),
-                        zoomable: false,
-                        moveable: true,
-                        orientation: 'top',
-                        groupEditable: false,
-                        editable: {
-                            add: false,
-                            updateTime: false,
-                            updateGroup: false,
-                            remove: false,
+                var timeline = this.timeline = new Vis.Timeline($timeline.get(0), itemsDataSet, this.groupsDataSet, {
+                    dataAttributes: 'all',
+                    start: this.start.toDate(),
+                    end: this.end.toDate(),
+                    moment: function (date) {
+                        var m = moment(date);
+                        if (date && date.noTimeZone) {
+                            return m;
+                        }
+                        return m.tz(this.getDateTime().getTimeZone());
+                    }.bind(this),
+                    format: this.getFormatObject(),
+                    zoomable: false,
+                    moveable: true,
+                    orientation: 'top',
+                    groupEditable: false,
+                    editable: {
+                        add: false,
+                        updateTime: false,
+                        updateGroup: false,
+                        remove: false,
+                    },
+                    showCurrentTime: true,
+                    locales: {
+                        mylocale: {
+                            current: this.translate('current', 'labels', 'Calendar'),
+                            time: this.translate('time', 'labels', 'Calendar')
+                        }
+                    },
+                    locale: 'mylocale',
+                    margin: {
+                        item: {
+                            vertical: 12,
                         },
-                        showCurrentTime: true,
-                        locales: {
-                            mylocale: {
-                                current: this.translate('current', 'labels', 'Calendar'),
-                                time: this.translate('time', 'labels', 'Calendar')
-                            }
-                        },
-                        locale: 'mylocale',
-                        margin: {
-                            item: {
-                                vertical: 12,
-                            },
-                            axis: 6,
-                        },
-                    });
+                        axis: 6,
+                    },
+                });
 
-                    $timeline.css('min-height', '');
+                $timeline.css('min-height', '');
 
-                    timeline.on('rangechanged', function (e) {
-                        e.skipClick = true;
+                timeline.on('rangechanged', function (e) {
+                    e.skipClick = true;
 
-                        this.blockClick = true;
-                        setTimeout(function () {this.blockClick = false}.bind(this), 100);
+                    this.blockClick = true;
+                    setTimeout(function () {this.blockClick = false}.bind(this), 100);
 
-                        this.start = moment(e.start);
-                        this.end = moment(e.end);
+                    this.start = moment(e.start);
+                    this.end = moment(e.end);
 
-                        this.updateRange();
-                    }.bind(this));
-
-                    setTimeout(function () {
-                        this.lastHeight = $timeline.height();
-                    }.bind(this), 500);
-
+                    this.updateRange();
                 }.bind(this));
-           // }.bind(this));
+
+                setTimeout(function () {
+                    this.lastHeight = $timeline.height();
+                }.bind(this), 500);
+
+            }.bind(this));
         },
 
         updateEvent: function () {
