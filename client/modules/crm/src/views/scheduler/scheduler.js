@@ -46,8 +46,14 @@ define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis)
         setup: function () {
             this.startField = this.options.startField || 'dateStart';
             this.endField = this.options.endField || 'dateEnd';
-            this.usersField = this.options.usersField || 'users';
             this.assignedUserField = this.options.assignedUserField || 'assignedUser';
+
+            var usersFieldDefault = 'users';
+            if (!this.model.hasLink('users') && this.model.hasLink('assignedUsers')) {
+                usersFieldDefault = 'assignedUsers';
+            }
+
+            this.usersField = this.options.usersField || usersFieldDefault;
 
             this.userIdList = [];
 
