@@ -73,6 +73,7 @@ define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis)
 
                     if (!this.start || !this.end || !this.userIdList.length) {
                         if (!this.timeline) return;
+                        this.showNoData();
                         this.trigger('no-data');
                         return;
                     }
@@ -87,6 +88,10 @@ define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis)
                             this.end.toDate()
                         );
                     }
+
+                    if (this.noDataShown) {
+                        this.reRender();
+                    }
                 } else {
                     if (this.isRemoved()) return;
                     this.trigger('has-data');
@@ -95,14 +100,34 @@ define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis)
             }, this);
 
             this.once('remove', function () {
-                if (this.timeline) {
-                    this.timeline.destroy();
-                }
+                this.destroyTimeline();
             }, this);
+        },
+
+        destroyTimeline: function () {
+            if (this.timeline) {
+                this.timeline.destroy();
+                this.timeline = null;
+            }
+        },
+
+        showNoData: function () {
+            this.noDataShown = true;
+
+            this.destroyTimeline();
+
+            this.$timeline.empty();
+            this.$timeline.append(
+                '<div class="revert-margin">'+this.translate('No Data')+'</div>'
+            );
         },
 
         afterRender: function () {
             var $timeline = this.$timeline = this.$el.find('.timeline');
+
+            this.noDataShown = false;
+
+            this.$timeline.empty();
 
             this.initGroupsDataSet();
             this.initDates();
@@ -112,13 +137,12 @@ define('crm:views/scheduler/scheduler', ['view', 'lib!vis'], function (Dep, Vis)
             $timeline.get(0).innerHTML = '';
 
             if (!this.start || !this.end || !this.userIdList.length) {
+                this.showNoData();
                 this.trigger('no-data');
                 return;
             }
 
-            if (this.timeline) {
-                this.timeline.destroy();
-            }
+            this.destroyTimeline();
 
             if (this.lastHeight) {
                 $timeline.css('min-height', this.lastHeight + 'px');
